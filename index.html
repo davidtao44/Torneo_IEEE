@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Inscripción Torneo LoL</title>
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <div class="container">
+    <h1>Inscripción al Torneo de League of Legends</h1>
+    <p>Por favor, completa el siguiente formulario para inscribirte al torneo organizado por la rama estudiantil de IEEE.</p>
+    <form id="inscriptionForm">
+      <label for="fullName">Nombre completo:</label>
+      <input type="text" id="fullName" name="fullName" required>
+
+      <label for="lolUsername">Nombre de usuario de LoL:</label>
+      <input type="text" id="lolUsername" name="lolUsername" required>
+
+      <label for="phone">Teléfono:</label>
+      <input type="tel" id="phone" name="phone" required>
+
+      <label for="email">Correo electrónico:</label>
+      <input type="email" id="email" name="email" required>
+
+      <label for="paymentProof">Comprobante de pago (PDF o imagen):</label>
+      <input type="file" id="paymentProof" name="paymentProof" accept=".pdf,.jpg,.jpeg,.png" required>
+
+      <button type="submit">Enviar inscripción</button>
+    </form>
+    <p id="message"></p>
+  </div>
+  <script src="script.js"></script>
+</body>
+</html>
