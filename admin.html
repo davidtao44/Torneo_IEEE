@@ -22,38 +22,49 @@
     const inscriptionsList = document.getElementById('inscriptionsList');
 
     async function loadInscriptions() {
-      try {
-        // Consulta todos los registros de la tabla inscriptions
-        const { data, error } = await supabase
-          .from('inscriptions')
-          .select('*')
-          .order('created_at', { ascending: false }); // Ordena por fecha de creación
+  try {
+    // Consulta todos los registros de la tabla inscriptions
+    const { data, error } = await supabase
+      .from('inscriptions')
+      .select('*')
+      .order('created_at', { ascending: false });
 
-        if (error) throw error;
+    if (error) throw error;
 
-        // Limpia la lista antes de agregar nuevos elementos
-        inscriptionsList.innerHTML = '';
+    // Limpia la lista antes de agregar nuevos elementos
+    inscriptionsList.innerHTML = '';
 
-        // Agrega cada inscripción a la lista
-        data.forEach((item) => {
-          const li = document.createElement('li');
-          li.innerHTML = `
-            <strong>${item.full_name}</strong> (${item.email}) - 
-            Estado: ${item.approved ? 'Aprobado' : 'Pendiente'}
-            <button onclick="approve('${item.id}')">Aprobar</button>
-          `;
-          inscriptionsList.appendChild(li);
+    // Agrega cada inscripción a la lista
+    data.forEach((item) => {
+      const li = document.createElement('li');
+      li.innerHTML = `
+        <strong>${item.full_name}</strong> (${item.email}) - 
+        Estado: ${item.approved ? 'Aprobado' : 'Pendiente'}
+      `;
+
+      // Solo agrega el botón si la inscripción no está aprobada
+      if (!item.approved) {
+        const approveButton = document.createElement('button');
+        approveButton.textContent = 'Aprobar';
+        approveButton.addEventListener('click', async () => {
+          await approve(item.id);
+          approveButton.remove(); // Elimina el botón después de aprobar
         });
-      } catch (error) {
-        console.error('Error al cargar las inscripciones:', error);
-        inscriptionsList.innerHTML = '<li>Error al cargar las inscripciones.</li>';
+        li.appendChild(approveButton);
       }
-    }
+
+      inscriptionsList.appendChild(li);
+    });
+  } catch (error) {
+    console.error('Error al cargar las inscripciones:', error);
+    inscriptionsList.innerHTML = '<li>Error al cargar las inscripciones.</li>';
+  }
+}
 
     async function approve(id) {
       try {
         // Actualiza el estado de la inscripción a "aprobado"
-        const { error } = await supabase
+        const { data, error } = await supabase
           .from('inscriptions')
           .update({ approved: true })
           .eq('id', id);
