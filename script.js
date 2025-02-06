@@ -1,18 +1,11 @@
-// Configuración de Firebase
-const firebaseConfig = {
-    apiKey: "AIzaSyCMibEPcfb2Tq5lSjGoh10sld1z56vfizM",
-    authDomain: "registro-torneo-lol.firebaseapp.com",
-    projectId: "registro-torneo-lol",
-    storageBucket: "registro-torneo-lol.firebasestorage.app",
-    messagingSenderId: "181636238566",
-    appId: "1:181636238566:web:fb41e3fdf2952e3885bf27",
-    measurementId: "G-SCKV8TDRRP"
-  };
-  
-  // Inicializa Firebase
-firebase.initializeApp(firebaseConfig);
-const db = firebase.firestore();
-const storage = firebase.storage();
+import { createClient } from 'https://cdn.jsdelivr.net/npm/@supabase/supabase-js/+esm';
+
+// Configuración de Supabase
+const supabaseUrl = 'https://vomdmiogipuenyjdqzdp.supabase.co';
+const supabaseKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InZvbWRtaW9naXB1ZW55amRxemRwIiwicm9sZSI6ImFub24iLCJpYXQiOjE3Mzg4NTMyNzYsImV4cCI6MjA1NDQyOTI3Nn0.XHwc6dz-PxBZDMxSqNoydjF44Ku-Fsr8RL3kUvoRsZA';
+
+// Inicializa Supabase
+const supabase = createClient(supabaseUrl, supabaseKey);
 
 document.getElementById('inscriptionForm').addEventListener('submit', async (e) => {
   e.preventDefault();
@@ -29,21 +22,28 @@ document.getElementById('inscriptionForm').addEventListener('submit', async (e) 
   }
 
   try {
-    // Subir archivo a Firebase Storage
-    const storageRef = storage.ref(`comprobantes/${paymentProof.name}`);
-    await storageRef.put(paymentProof);
-    const fileUrl = await storageRef.getDownloadURL();
+    // Subir archivo a Supabase Storage
+    const { data: storageData, error: storageError } = await supabase.storage
+      .from('comprobantes')
+      .upload(`${paymentProof.name}`, paymentProof);
 
-    // Guardar datos en Firestore
-    await db.collection('inscriptions').add({
-      fullName,
-      lolUsername,
-      phone,
-      email,
-      paymentProof: fileUrl,
-      approved: false,
-      timestamp: firebase.firestore.FieldValue.serverTimestamp()
-    });
+    if (storageError) throw storageError;
+
+    const fileUrl = `${supabaseUrl}/storage/v1/object/public/comprobantes/${paymentProof.name}`;
+
+    // Guardar datos en la base de datos
+    const { data, error } = await supabase.from('inscriptions').insert([
+      {
+        full_name: fullName,
+        lol_username: lolUsername,
+        phone,
+        email,
+        payment_proof: fileUrl,
+        approved: false,
+      },
+    ]);
+
+    if (error) throw error;
 
     document.getElementById('message').textContent = '¡Inscripción enviada exitosamente!';
     document.getElementById('inscriptionForm').reset();

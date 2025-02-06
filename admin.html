@@ -8,42 +8,50 @@
 <body>
   <h1>Panel de Administración</h1>
   <ul id="inscriptionsList"></ul>
-  <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app.js"></script>
-  <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js"></script>
   <script>
-    const firebaseConfig = {
-      apiKey: "YOUR_API_KEY",
-      authDomain: "YOUR_PROJECT_ID.firebaseapp.com",
-      projectId: "YOUR_PROJECT_ID",
-      storageBucket: "YOUR_PROJECT_ID.appspot.com",
-      messagingSenderId: "SENDER_ID",
-      appId: "APP_ID"
-    };
-
-    const app = firebase.initializeApp(firebaseConfig);
-    const db = firebase.firestore();
+    const supabaseUrl = 'https://vomdmiogipuenyjdqzdp.supabase.co';
+    const supabaseKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InZvbWRtaW9naXB1ZW55amRxemRwIiwicm9sZSI6ImFub24iLCJpYXQiOjE3Mzg4NTMyNzYsImV4cCI6MjA1NDQyOTI3Nn0.XHwc6dz-PxBZDMxSqNoydjF44Ku-Fsr8RL3kUvoRsZA';
+    const supabase = supabase.createClient(supabaseUrl, supabaseKey);
 
     const inscriptionsList = document.getElementById('inscriptionsList');
 
-    db.collection('inscriptions').onSnapshot((snapshot) => {
+    async function loadInscriptions() {
+      const { data, error } = await supabase.from('inscriptions').select('*');
+      if (error) {
+        console.error('Error:', error);
+        return;
+      }
+
       inscriptionsList.innerHTML = '';
-      snapshot.forEach((doc) => {
-        const data = doc.data();
+      data.forEach((item) => {
         const li = document.createElement('li');
         li.innerHTML = `
-          <strong>${data.fullName}</strong> (${data.email}) - 
-          <a href="${data.paymentProof}" target="_blank">Ver comprobante</a> - 
-          Estado: ${data.approved ? 'Aprobado' : 'Pendiente'}
-          <button onclick="approve('${doc.id}')">Aprobar</button>
+          <strong>${item.full_name}</strong> (${item.email}) - 
+          <a href="${item.payment_proof}" target="_blank">Ver comprobante</a> - 
+          Estado: ${item.approved ? 'Aprobado' : 'Pendiente'}
+          <button onclick="approve('${item.id}')">Aprobar</button>
         `;
         inscriptionsList.appendChild(li);
       });
-    });
+    }
 
     async function approve(id) {
-      await db.collection('inscriptions').doc(id).update({ approved: true });
-      alert('Inscripción aprobada.');
+      const { error } = await supabase
+        .from('inscriptions')
+        .update({ approved: true })
+        .eq('id', id);
+
+      if (error) {
+        console.error('Error:', error);
+        alert('Error al aprobar la inscripción.');
+      } else {
+        alert('Inscripción aprobada.');
+        loadInscriptions();
+      }
     }
+
+    loadInscriptions();
   </script>
 </body>
 </html>
