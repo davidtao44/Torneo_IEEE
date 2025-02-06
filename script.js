@@ -1,3 +1,4 @@
+// Importa Supabase como un módulo por defecto
 import { createClient } from 'https://cdn.jsdelivr.net/npm/@supabase/supabase-js/+esm';
 
 // Configuración de Supabase
@@ -14,23 +15,8 @@ document.getElementById('inscriptionForm').addEventListener('submit', async (e) 
   const lolUsername = document.getElementById('lolUsername').value;
   const phone = document.getElementById('phone').value;
   const email = document.getElementById('email').value;
-  const paymentProof = document.getElementById('paymentProof').files[0];
-
-  if (!paymentProof) {
-    alert('Por favor, sube un comprobante de pago.');
-    return;
-  }
 
   try {
-    // Subir archivo a Supabase Storage
-    const { data: storageData, error: storageError } = await supabase.storage
-      .from('comprobantes')
-      .upload(`${paymentProof.name}`, paymentProof);
-
-    if (storageError) throw storageError;
-
-    const fileUrl = `${supabaseUrl}/storage/v1/object/public/comprobantes/${paymentProof.name}`;
-
     // Guardar datos en la base de datos
     const { data, error } = await supabase.from('inscriptions').insert([
       {
@@ -38,7 +24,6 @@ document.getElementById('inscriptionForm').addEventListener('submit', async (e) 
         lol_username: lolUsername,
         phone,
         email,
-        payment_proof: fileUrl,
         approved: false,
       },
     ]);

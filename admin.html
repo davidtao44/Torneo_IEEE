@@ -8,49 +8,67 @@
 <body>
   <h1>Panel de Administración</h1>
   <ul id="inscriptionsList"></ul>
-  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js"></script>
-  <script>
+  <script type="module">
+    // Importa Supabase como un módulo por defecto
+    import { createClient } from 'https://cdn.jsdelivr.net/npm/@supabase/supabase-js/+esm';
+
+    // Configuración de Supabase
     const supabaseUrl = 'https://vomdmiogipuenyjdqzdp.supabase.co';
     const supabaseKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InZvbWRtaW9naXB1ZW55amRxemRwIiwicm9sZSI6ImFub24iLCJpYXQiOjE3Mzg4NTMyNzYsImV4cCI6MjA1NDQyOTI3Nn0.XHwc6dz-PxBZDMxSqNoydjF44Ku-Fsr8RL3kUvoRsZA';
-    const supabase = supabase.createClient(supabaseUrl, supabaseKey);
+
+    // Inicializa Supabase
+    const supabase = createClient(supabaseUrl, supabaseKey);
 
     const inscriptionsList = document.getElementById('inscriptionsList');
 
     async function loadInscriptions() {
-      const { data, error } = await supabase.from('inscriptions').select('*');
-      if (error) {
-        console.error('Error:', error);
-        return;
-      }
+      try {
+        // Consulta todos los registros de la tabla inscriptions
+        const { data, error } = await supabase
+          .from('inscriptions')
+          .select('*')
+          .order('created_at', { ascending: false }); // Ordena por fecha de creación
 
-      inscriptionsList.innerHTML = '';
-      data.forEach((item) => {
-        const li = document.createElement('li');
-        li.innerHTML = `
-          <strong>${item.full_name}</strong> (${item.email}) - 
-          <a href="${item.payment_proof}" target="_blank">Ver comprobante</a> - 
-          Estado: ${item.approved ? 'Aprobado' : 'Pendiente'}
-          <button onclick="approve('${item.id}')">Aprobar</button>
-        `;
-        inscriptionsList.appendChild(li);
-      });
+        if (error) throw error;
+
+        // Limpia la lista antes de agregar nuevos elementos
+        inscriptionsList.innerHTML = '';
+
+        // Agrega cada inscripción a la lista
+        data.forEach((item) => {
+          const li = document.createElement('li');
+          li.innerHTML = `
+            <strong>${item.full_name}</strong> (${item.email}) - 
+            Estado: ${item.approved ? 'Aprobado' : 'Pendiente'}
+            <button onclick="approve('${item.id}')">Aprobar</button>
+          `;
+          inscriptionsList.appendChild(li);
+        });
+      } catch (error) {
+        console.error('Error al cargar las inscripciones:', error);
+        inscriptionsList.innerHTML = '<li>Error al cargar las inscripciones.</li>';
+      }
     }
 
     async function approve(id) {
-      const { error } = await supabase
-        .from('inscriptions')
-        .update({ approved: true })
-        .eq('id', id);
+      try {
+        // Actualiza el estado de la inscripción a "aprobado"
+        const { error } = await supabase
+          .from('inscriptions')
+          .update({ approved: true })
+          .eq('id', id);
 
-      if (error) {
-        console.error('Error:', error);
-        alert('Error al aprobar la inscripción.');
-      } else {
+        if (error) throw error;
+
         alert('Inscripción aprobada.');
-        loadInscriptions();
+        loadInscriptions(); // Recarga la lista después de aprobar
+      } catch (error) {
+        console.error('Error al aprobar la inscripción:', error);
+        alert('Error al aprobar la inscripción.');
       }
     }
 
+    // Carga las inscripciones al cargar la página
     loadInscriptions();
   </script>
 </body>
