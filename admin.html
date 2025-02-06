@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Panel de Administración</title>
+</head>
+<body>
+  <h1>Panel de Administración</h1>
+  <ul id="inscriptionsList"></ul>
+  <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore.js"></script>
+  <script>
+    const firebaseConfig = {
+      apiKey: "YOUR_API_KEY",
+      authDomain: "YOUR_PROJECT_ID.firebaseapp.com",
+      projectId: "YOUR_PROJECT_ID",
+      storageBucket: "YOUR_PROJECT_ID.appspot.com",
+      messagingSenderId: "SENDER_ID",
+      appId: "APP_ID"
+    };
+
+    const app = firebase.initializeApp(firebaseConfig);
+    const db = firebase.firestore();
+
+    const inscriptionsList = document.getElementById('inscriptionsList');
+
+    db.collection('inscriptions').onSnapshot((snapshot) => {
+      inscriptionsList.innerHTML = '';
+      snapshot.forEach((doc) => {
+        const data = doc.data();
+        const li = document.createElement('li');
+        li.innerHTML = `
+          <strong>${data.fullName}</strong> (${data.email}) - 
+          <a href="${data.paymentProof}" target="_blank">Ver comprobante</a> - 
+          Estado: ${data.approved ? 'Aprobado' : 'Pendiente'}
+          <button onclick="approve('${doc.id}')">Aprobar</button>
+        `;
+        inscriptionsList.appendChild(li);
+      });
+    });
+
+    async function approve(id) {
+      await db.collection('inscriptions').doc(id).update({ approved: true });
+      alert('Inscripción aprobada.');
+    }
+  </script>
+</body>
+</html>
