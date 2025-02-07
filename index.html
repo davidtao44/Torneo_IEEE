@@ -1,32 +1,93 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Inscripción Torneo LoL</title>
-  <link rel="stylesheet" href="styles.css">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Torneo de LoL - IEEE Sogamoso</title>
+    <link rel="stylesheet" href="styles.css">
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/aos@2.3.4/dist/aos.css" rel="stylesheet">
 </head>
 <body>
-  <div class="container">
-    <h1>Inscripción al Torneo de League of Legends</h1>
-    <p>Por favor, completa el siguiente formulario para inscribirte al torneo organizado por la rama estudiantil de IEEE.</p>
-    <form id="inscriptionForm">
-      <label for="fullName">Nombre completo:</label>
-      <input type="text" id="fullName" name="fullName" required>
+    <header class="hero">
+        <div class="hero-content">
+            <div class="title-container">
+                <h1>Torneo de League of Legends</h1>
+            </div>
+            <div class="subtitle-container">
+                <p>Organizado por la Rama Estudiantil IEEE Sogamoso</p>
+                <img src="logo IEEE.jpg" alt="">
+            </div>
+        </div>
+    </header>
 
-      <label for="lolUsername">Nombre de usuario de LoL:</label>
-      <input type="text" id="lolUsername" name="lolUsername" required>
+    <section class="description" data-aos="fade-up">
+        <div class="container">
+            <h2>Descripción del Evento</h2>
+            <p>¡Bienvenidos al Torneo de League of Legends organizado por la rama IEEE! Este evento tiene como objetivo financiar y apoyar actividades para el desarrollo de la rama, mientras reúne a jugadores apasionados en un ambiente de sana competencia y comunidad inclusiva. ¡Únete y disfruta del torneo!</p>
+        </div>
+    </section>
+    
+    <section class="features" data-aos="fade-up">
+        <div class="container">
+            <h2>Características del Torneo</h2>
+            <ul>
+                <li>Formato: 5 vs 5</li>
+                <li>Modalidad: Remota</li>
+                <li>Plataforma: PC</li>
+                <li>Inscripción por persona</li>
+            </ul>
+        </div>
+    </section>
 
-      <label for="phone">Teléfono:</label>
-      <input type="tel" id="phone" name="phone" required>
+    <section class="features" data-aos="fade-up">
+        <div class="container">
+            <h2>Cronograma </h2>
+            <ul>
+                <li>Fecha de inscripción: Hasta el --</li>
+                <li>Inicio del torneo: --</li>
+                <li>Final del torneo: --</li>
+            </ul>
+        </div>
+    </section>
 
-      <label for="email">Correo electrónico:</label>
-      <input type="email" id="email" name="email" required>
+    <section class="description" data-aos="fade-up">
+        <div class="container">
+            <h2>Premio del Torneo</h2>
+            <p>El equipo ganador del torneo recibirá un premio total de $250,000 COP !!!, que podrá variar dependiendo de la cantidad de participantes inscritos. ¡Cuantos más equipos se registren, mayor será el premio!</p>
+        </div>
+    </section>
+    
+    <section class="payment" data-aos="fade-up">
+        <div class="container">
+            <h2>Métodos de Pago</h2>
+            <p>El costo de inscripción por persona es de $10.000 COP. Puedes realizar el pago mediante:</p>
+            <ul>
+                <li>Nequi: 302 2547336</li>
+                <li>DaviPlata: 302 2547336</li>
+            </ul>
+            <p>Una vez realizado el pago, se les confirmara por medio de correo electronico su inscripción (esta notificación no sera inmediata)</p>
+        </div>
+    </section>
+    
+    <section class="cta" data-aos="fade-up">
+        <div class="container">
+            <a href="https://forms.gle/gEpyiUx8i8eYsyWU9" class="btn">Inscríbete Aquí</a>
+        </div>
+    </section>
 
-      <button type="submit">Enviar inscripción</button>
-    </form>
-    <p id="message"></p>
-  </div>
-  <script type="module" src="script.js"></script>
+    <footer>
+        <div class="container">
+            <p>&copy; 2025 IEEE Sogamoso, Escuela de ingeniería electrónica. Todos los derechos reservados.</p>
+        </div>
+    </footer>
+
+    <script src="https://cdn.jsdelivr.net/npm/aos@2.3.4/dist/aos.js"></script>
+<script>
+    AOS.init({
+        duration: 1000, // Duración de la animación
+        once: true, // La animación solo ocurre una vez
+    });
+</script>
 </body>
 </html>
